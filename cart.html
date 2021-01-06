@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        body {
+            font: 15px normal Arial, sans-serif;
+            color: #000000;
+        }
+        label {
+            width: 5em;
+            display: inline-block;
+        }
+        ul {
+            padding: 0;
+        }
+        form {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Shopping Cart</h1>
+    <ul id="myData">
+    </ul>
+    </form>
+    <hr>
+    <img src="cart.gif">
+    <hr>
+    <form method="POST" action="/cart">
+        <label for="name">Name</label> <input id="name" type="text" name="name" placeholder="Name"><br>
+        <label for="amount">Amount</label> <input id="amount" type="number" name="amount" placeholder="Amount"><br>
+        <input type="hidden" name="action" value="add">
+        <button type="submit">Add entry</button>
+    </form>
+    <script>
+        const form = document.forms[0];
+        form.addEventListener('submit', function(e){
+            e.preventDefault();
+            var name = document.getElementById('name').value;
+            var amount = document.getElementById('amount').value;
+
+            const xhr = new XMLHttpRequest;
+            xhr.onreadystatechange = function(){
+                if(this.readyState == 4 && this.status == 200){
+                    showEntry(xhr.response);
+                }
+            }
+
+            xhr.open('POST', '/cart');
+            xhr.setRequestHeader('Content-Type' , 'application/json');
+            xhr.send(JSON.stringify({name: document.getElementById('name').value , amount: document.getElementById('amount').value}));
+            
+           
+        });
+        function showEntry(req) {
+            var req = req;
+            var resutl = JSON.stringify(req);
+            var parseData = JSON.parse(resutl);
+            var data = JSON.parse(parseData);
+            // alert(parseData.name);
+            //  document.getElementById("myData").innerHTML = parseDatas.name;
+            var txt = '' ;
+            var div = document.createElement("li");
+            div.innerHTML = 'Name: ' + data.name + ' ' + data.amount;
+            
+             document.getElementById("myData").appendChild(div);
+
+            // var div = document.createElement("div");
+            //     div.innerHTML = 'Name: ' + data[i].name + ' ' + data[i].amount;
+            //     mainContainer.appendChild(div);
+            // .then(function (response) {
+            //     return response.json();
+            // })
+            // .then(function (data) {
+                // appendData(req);
+            // })
+            // .catch(function (err) {
+            //     console.log('error: ' + err);
+            // });
+        }
+        // var xhttp = new XMLHttpRequest();
+        //     xhttp.onreadystatechange = function() {
+        //         var myObj = JSON.parse(this.responseText);
+        //         var x , txt= '';
+        //         if (this.readyState == 4 && this.status == 200) {
+        //         for (x in myObj ) {
+        //             txt += "<ul><li>" + myObj[x].name + ' ' + myObj[x].amount + "</ul></li>"
+        //         }
+        //         document.getElementById("myData").innerHTML = txt
+        //         }
+        //     };
+        //     xhttp.open("GET", "/cart", true);
+        //     xhttp.send();
+        
+
+        function appendData(data) {
+            var mainContainer = document.getElementById("myData");
+            for (var i = 0; i <= data.length; i++) {
+                var div = document.createElement("div");
+                div.innerHTML = 'Name: ' + data[i].name + ' ' + data[i].amount;
+                mainContainer.appendChild(div);
+        }
+        }
+        fetch('/cart')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                appendData(data);
+            })
+            .catch(function (err) {
+                console.log('error: ' + err);
+            });
+
+    
+
+    </script>
+</body>
+</html>
